@@ -6,6 +6,9 @@
 #include "timer.h"
 #include "util.h"
 #include "onewire.h"
+#include "ds18b20.h"
+
+#define SEUIL_ALARME	28.0f		// degres C : au-dessus, la LED s'allume
 
 /* Le seul endroit du projet ou l'on dit sur quelle broche est le bus */
 static struct ONEWIRE_Config bus = { GPIOA, 10 };   // PA10 (D2)
@@ -17,6 +20,7 @@ void APP_Init(void)
 	USART2_Init();
 	SYSTICK_Init();
 	TIM2_Init();
+	DS18B20_Init(&bus);                      // la couche 2 memorise le bus
 }
 
 /* ------------------------------------------------------------------
@@ -49,4 +53,33 @@ void APP_TestOneWire(void)
 
 	GPIO_TogglePin(GPIOA, 5);                // la LED montre que la boucle tourne
 	SYSTICK_Delay(10);                       // 10 ms de silence avant la trame suivante
+}
+
+/* ------------------------------------------------------------------
+ * APPLICATION 2 : thermometre (cours, paragraphe 1.4) avec alarme
+ * Affiche la temperature ; LED allumee au-dessus de SEUIL_ALARME.
+ * ------------------------------------------------------------------ */
+void APP_Thermometre(void)
+{
+	float temperature;
+
+	temperature = DS18B20_GetTemperature();  // ~0,75 s (conversion)
+
+	if (temperature == DS18B20_ERROR){
+		printf("Aucun capteur detecte\r\n");
+		GPIO_ResetPin(GPIOA, 5);             // LED eteinte
+		SYSTICK_Delay(1000);
+		return;
+	}
+
+	if (temperature > SEUIL_ALARME){
+		GPIO_SetPin(GPIOA, 5);               // alarme : LED allumee
+		printf("Temperature : %.2f C  ALARME (> %.1f C)\r\n", temperature, SEUIL_ALARME);
+	}
+	else{
+		GPIO_ResetPin(GPIOA, 5);             // LED eteinte
+		printf("Temperature : %.2f C\r\n", temperature);
+	}
+
+	SYSTICK_Delay(250);                      // une mesure par seconde environ
 }

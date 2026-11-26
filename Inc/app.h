@@ -3,5 +3,6 @@
 
 void APP_Init(void);
 void APP_TestOneWire(void);
+void APP_Thermometre(void);
 
 #endif

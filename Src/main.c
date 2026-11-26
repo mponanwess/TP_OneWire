@@ -1,11 +1,11 @@
 #include "app.h"
 
-/* Application 1 : test du bus One-Wire a l'oscilloscope */
+/* Application 2 : thermometre avec alarme */
 int main(void)
 {
 	APP_Init();
 
 	while(1){
-		APP_TestOneWire();
+		APP_Thermometre();
 	}
 }
