@@ -64,3 +64,23 @@ void DWT_Delay(uint32_t _us)
 // Get MCO HSE to PA8 (D7)
 // the MCO1PRE[2:0] and MCO1[1:0]
 
+//////////////////////////////////////////////
+////////////// TIM2 : microsecondes //////////
+//////////////////////////////////////////////
+
+void TIM2_Init(void){
+	RCC->APB1ENR |= RCC_APB1ENR_TIM2EN;              // 1) horloge du TIM2
+	TIM2->PSC = (SystemCoreClock / 1000000) - 1;     // 2) 16 MHz / 16 = 1 MHz -> 1 tick = 1 us
+	TIM2->ARR = 0xFFFFFFFF;                          // 3) compter jusqu'au maximum (32 bits)
+	TIM2->EGR = TIM_EGR_UG;                          // 4) charger PSC tout de suite
+	TIM2->CR1 |= TIM_CR1_CEN;                        // 5) demarrer le compteur
+}
+
+/**
+ * Attente en microsecondes avec TIM2, fonction bloquante
+ * @param useconds : microsecondes a attendre
+ */
+void TIM2_DelayUs(uint32_t useconds){
+	uint32_t start = TIM2->CNT;
+	while ((TIM2->CNT - start) < useconds);
+}
