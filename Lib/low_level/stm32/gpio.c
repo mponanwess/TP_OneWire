@@ -1,6 +1,3 @@
-#include <stdint.h>
-#include <stm32f446xx.h>
-#include "main.h"
 #include "gpio.h"
 
 void GPIO_Init(void){
