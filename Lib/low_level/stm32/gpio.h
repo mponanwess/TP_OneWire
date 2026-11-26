@@ -18,6 +18,9 @@
 #define BITMASK_5BITS	0b11111
 
 void 		GPIO_Init(void);
+void 		GPIO_SetMode(GPIO_TypeDef* GPIO, uint16_t pin, uint8_t mode);
+void 		GPIO_SetOpenDrain(GPIO_TypeDef* GPIO, uint16_t pin);
+void 		GPIO_SetPullUp(GPIO_TypeDef* GPIO, uint16_t pin);
 void 		GPIO_SetPin(GPIO_TypeDef* GPIO, uint16_t pin);
 void 		GPIO_ResetPin(GPIO_TypeDef* GPIO, uint16_t pin);
 void 		GPIO_TogglePin(GPIO_TypeDef* GPIO, uint16_t pin);
