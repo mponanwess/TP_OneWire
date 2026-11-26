@@ -74,3 +74,34 @@ uint8_t ONEWIRE_ReadBit(struct ONEWIRE_Config* config)
 
 	return bit;
 }
+
+/**
+ * Envoie un octet, bit de poids faible (LSB) en premier.
+ */
+void ONEWIRE_WriteByte(struct ONEWIRE_Config* config, uint8_t myData)
+{
+	uint8_t i;
+
+	for (i = 0; i < 8; i++){
+		if (myData & (1 << i))                       // le bit i vaut-il 1 ?
+			ONEWIRE_WriteBit1(config);
+		else
+			ONEWIRE_WriteBit0(config);
+	}
+}
+
+/**
+ * Lit un octet, bit de poids faible (LSB) en premier.
+ */
+uint8_t ONEWIRE_ReadByte(struct ONEWIRE_Config* config)
+{
+	uint8_t i;
+	uint8_t data = 0;                                // on part de 00000000
+
+	for (i = 0; i < 8; i++){
+		if (ONEWIRE_ReadBit(config))                 // si le bit lu vaut 1
+			data |= (1 << i);                        //    on met le bit i a 1
+	}
+
+	return data;
+}
