@@ -37,3 +37,25 @@ float DS18B20_GetTemperature(void)
 	brut = (int16_t)((msb << 8) | lsb);                  // recoller les 2 octets
 	return brut / 16.0f;                                 // 1 unite = 1/16 de degre
 }
+
+/**
+ * Lit le code ROM de 64 bits du capteur (commande READ_ROM).
+ * Ne fonctionne que s'il n'y a qu'UN seul capteur sur le bus.
+ * @param rom : tableau de 8 octets rempli par la fonction
+ *              rom[0] = code famille, rom[1..6] = numero de serie, rom[7] = CRC
+ * @return 1 si un capteur a repondu, 0 sinon
+ */
+uint8_t DS18B20_ReadRom(uint8_t rom[8])
+{
+	uint8_t i;
+
+	if (ONEWIRE_Reset(ds18b20_bus) == 0)                 // (1) Reset
+		return 0;                                        //     personne n'a repondu
+
+	ONEWIRE_WriteByte(ds18b20_bus, DS18B20_READ_ROM);    // (2) READ_ROM
+
+	for (i = 0; i < 8; i++)                              // (3) lire les 8 octets
+		rom[i] = ONEWIRE_ReadByte(ds18b20_bus);
+
+	return 1;
+}

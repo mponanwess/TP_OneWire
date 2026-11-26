@@ -83,3 +83,43 @@ void APP_Thermometre(void)
 
 	SYSTICK_Delay(250);                      // une mesure par seconde environ
 }
+
+/* ------------------------------------------------------------------
+ * APPLICATION 3 : carte d'identite du capteur (commande READ_ROM)
+ * Affiche le code ROM de 64 bits et en deduit le type de capteur.
+ * ------------------------------------------------------------------ */
+void APP_Identite(void)
+{
+	uint8_t rom[8];                          // tableau de 8 octets
+	uint8_t i;
+
+	if (DS18B20_ReadRom(rom) == 0){
+		printf("Aucun capteur detecte\r\n");
+		SYSTICK_Delay(1000);
+		return;
+	}
+
+	printf("Code ROM :");
+	for (i = 0; i < 8; i++)
+		printf(" %02X", rom[i]);             // les 8 octets, dans l'ordre de reception
+	printf("\r\n");
+
+	printf("  Famille : 0x%02X -> ", rom[0]);
+	if (rom[0] == 0x28)
+		printf("DS18B20\r\n");
+	else if (rom[0] == 0x10)
+		printf("DS1820 / DS18S20\r\n");
+	else
+		printf("inconnue\r\n");
+
+	printf("  Numero de serie :");
+	for (i = 6; i >= 1; i--)                 // octet de poids fort en premier
+		printf(" %02X", rom[i]);
+	printf("\r\n");
+
+	printf("  CRC : 0x%02X\r\n\r\n", rom[7]);
+
+	SYSTICK_Delay(2000);
+}
+
+

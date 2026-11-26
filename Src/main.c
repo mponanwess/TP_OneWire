@@ -1,11 +1,11 @@
 #include "app.h"
 
-/* Application 2 : thermometre avec alarme */
+/* Application 3 : carte d'identite du capteur (code ROM) */
 int main(void)
 {
 	APP_Init();
 
 	while(1){
-		APP_Thermometre();
+		APP_Identite();
 	}
 }
