@@ -11,5 +11,8 @@ struct ONEWIRE_Config {
 };
 
 uint8_t ONEWIRE_Reset(struct ONEWIRE_Config* config);
+void    ONEWIRE_WriteBit0(struct ONEWIRE_Config* config);
+void    ONEWIRE_WriteBit1(struct ONEWIRE_Config* config);
+uint8_t ONEWIRE_ReadBit(struct ONEWIRE_Config* config);
 
 #endif
